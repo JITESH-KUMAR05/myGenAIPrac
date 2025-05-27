@@ -1,0 +1,3 @@
+git remote add origin https://github.com/JITESH-KUMAR05/myGenAIPrac.git
+git branch -M main
+git push -u origin main
