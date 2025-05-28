@@ -155,3 +155,201 @@ Here's how different stemmers might treat various words:
 
 Stemming is often contrasted with **Lemmatization**, which is a more advanced technique that aims to return the dictionary form (lemma) of a word, considering its context and part of speech. Lemmatization is generally more accurate but computationally more expensive.
 
+## Lemmatization
+
+Lemmatization is another technique to reduce words to a more basic or dictionary form, called the **lemma**. Unlike stemming, lemmatization aims to return a valid word that exists in the language.
+
+### What is Lemmatization?
+
+*   **Purpose**: To group together different inflected forms of a word so they can be analyzed as a single item. It's about finding the "dictionary form" of a word.
+*   **Goal**: Similar to stemming, it aims to reduce words to a common base form. However, lemmatization is more sophisticated because it considers the word's meaning and part of speech.
+*   **Example**:
+    *   `corpora` -> `corpus`
+    *   `better` -> `good` (if "better" is used as an adjective)
+    *   `running` -> `run` (if "running" is used as a verb)
+    *   `is`, `are`, `was`, `were` -> `be`
+
+### How Lemmatization Works
+
+*   **Mechanism**: Lemmatization uses a vocabulary (like a dictionary) and morphological analysis of words. It often needs to know the **Part-of-Speech (POS)** of a word (e.g., noun, verb, adjective) to correctly determine its lemma.
+*   **Key Characteristic**: It produces actual words. The output of lemmatization is always a valid word.
+
+### Lemmatizer in NLTK: `WordNetLemmatizer`
+
+NLTK's most common lemmatizer is `WordNetLemmatizer`, which uses the WordNet database.
+
+*   **Description**: It looks up words in the WordNet database to find their lemmas.
+*   **Importance of Part-of-Speech (POS) tags**: The `lemmatize()` method takes an optional `pos` argument. If you don't specify the POS, it defaults to 'n' (noun). Providing the correct POS tag can significantly improve the accuracy of lemmatization. Common POS tags used are:
+    *   `n` for noun
+    *   `v` for verb
+    *   `a` for adjective
+    *   `r` for adverb
+*   **NLTK Usage**:
+    ```python
+    from nltk.stem import WordNetLemmatizer
+    # You might need to download wordnet: nltk.download('wordnet')
+    # and omw-1.4 for other languages: nltk.download('omw-1.4')
+
+    lemmatizer = WordNetLemmatizer()
+
+    print(f"cats: {lemmatizer.lemmatize('cats')}") # Output: cat (pos defaults to 'n')
+    print(f"cacti: {lemmatizer.lemmatize('cacti')}") # Output: cactus
+    print(f"geese: {lemmatizer.lemmatize('geese')}") # Output: goose
+    print(f"rocks: {lemmatizer.lemmatize('rocks')}") # Output: rock
+    print(f"python: {lemmatizer.lemmatize('python')}") # Output: python
+
+    # Using POS tags for better accuracy
+    print(f"better (adjective): {lemmatizer.lemmatize('better', pos='a')}") # Output: good
+    print(f"running (verb): {lemmatizer.lemmatize('running', pos='v')}") # Output: run
+    print(f"running (noun): {lemmatizer.lemmatize('running', pos='n')}") # Output: running
+    print(f"ate (verb): {lemmatizer.lemmatize('ate', pos='v')}") # Output: eat
+    ```
+
+### Stemming vs. Lemmatization
+
+| Feature         | Stemming                                     | Lemmatization                                        |
+| :-------------- | :------------------------------------------- | :--------------------------------------------------- |
+| **Process**     | Chops off prefixes/suffixes using rules.     | Uses vocabulary and morphological analysis.          |
+| **Output**      | May not be a valid word (e.g., "studi").     | Is a valid dictionary word (e.g., "study").          |
+| **Accuracy**    | Less accurate, can be crude.                 | More accurate, considers context (with POS).         |
+| **Speed**       | Faster.                                      | Slower (due to lookups and analysis).                |
+| **Complexity**  | Simpler.                                     | More complex, often requires POS tagging.            |
+| **Example: "studies"** | `studi` (PorterStemmer)                  | `study` (WordNetLemmatizer with `pos='v'` or `pos='n'`) |
+| **Example: "studying"**| `studi` (PorterStemmer)                  | `study` (WordNetLemmatizer with `pos='v'`)           |
+| **Example: "better"**  | `better` (PorterStemmer)                 | `good` (WordNetLemmatizer with `pos='a'`)            |
+
+### Advantages of Lemmatization
+
+*   **More Accurate Results**: Produces the actual dictionary form of a word, which is often more meaningful.
+*   **Improved Interpretability**: Since the output is a real word, it's easier for humans to understand.
+*   **Better for Advanced NLP Tasks**: Useful in applications where understanding the meaning of words is crucial, like chatbots or question-answering systems.
+
+### Disadvantages of Lemmatization
+
+*   **Slower than Stemming**: Requires dictionary lookups and (ideally) POS tagging, making it computationally more intensive.
+*   **Requires More Resources**: Needs a vocabulary (like WordNet) and potentially a POS tagger.
+*   **Complexity**: Can be more complex to implement correctly, especially if POS tagging is involved.
+
+### When to Use Lemmatization
+
+*   When the **accuracy of the base form is important** and you need actual words.
+*   In applications like **chatbots, question answering, or text summarization**, where understanding the semantic meaning is key.
+*   When **computational resources and time are not a major constraint**.
+*   If the interpretability of the output features is important.
+
+If speed and simplicity are paramount, and a slightly cruder form of normalization is acceptable, stemming might be preferred. Otherwise, lemmatization often provides superior results.
+
+## Stopwords
+
+Stopwords are common words that are often filtered out from text before processing in Natural Language Processing (NLP) tasks.
+
+### What are Stopwords?
+
+*   **Definition**: Stopwords are words that appear very frequently in a language but typically carry little to no significant semantic information for many NLP tasks.
+*   **Examples**: In English, words like "the", "is", "a", "an", "in", "on", "and", "to", "of", "it", "this", "that", "are", "was".
+*   **Purpose of Removal**: The main idea is to remove these high-frequency, low-information words to:
+    *   Reduce the size of the text data.
+    *   Allow NLP models to focus on more important words that carry more meaning.
+    *   Improve the efficiency and sometimes the performance of models.
+
+### Why Remove Stopwords?
+
+*   **Reduce Dimensionality**: Fewer unique words mean a smaller feature set for machine learning models.
+*   **Improve Model Performance**: By removing noise, models can focus on words that are more discriminative for the task at hand (e.g., classification, topic modeling).
+*   **Faster Processing**: Less data to process means quicker computations.
+*   **Focus on Content Words**: Helps in highlighting the words that define the content or topic of the text.
+
+### Stopwords in NLTK
+
+NLTK provides a predefined list of stopwords for many languages.
+
+*   **Accessing Stopwords**:
+    ```python
+    import nltk
+    from nltk.corpus import stopwords
+
+    # You might need to download the stopwords resource:
+    # nltk.download('stopwords')
+
+    english_stopwords = stopwords.words('english')
+    print(f"Number of English stopwords: {len(english_stopwords)}")
+    print(f"First 10 English stopwords: {english_stopwords[:10]}")
+    # Output:
+    # Number of English stopwords: 179
+    # First 10 English stopwords: ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're"]
+    ```
+*   **Removing Stopwords from Text**:
+    ```python
+    from nltk.tokenize import word_tokenize
+
+    text = "This is an example sentence showing off stop word filtration."
+    # Tokenize the text (and convert to lowercase for consistency)
+    words = word_tokenize(text.lower())
+    print(f"Original words: {words}")
+
+    # Filter out stopwords
+    # Also, often good to filter out punctuation or non-alphanumeric tokens
+    filtered_words = [word for word in words if word.isalnum() and word not in english_stopwords]
+    print(f"Words after stopword removal: {filtered_words}")
+    # Output:
+    # Original words: ['this', 'is', 'an', 'example', 'sentence', 'showing', 'off', 'stop', 'word', 'filtration', '.']
+    # Words after stopword removal: ['example', 'sentence', 'showing', 'stop', 'word', 'filtration']
+    ```
+
+### Customizing Stopword Lists
+
+Sometimes, the default list of stopwords might not be perfect for your specific task. You might want to:
+*   **Add domain-specific stopwords**: Words that are common in your particular dataset but not generally useful (e.g., "company", "report" in a dataset of business documents).
+*   **Remove certain words from the default list**: Words that are usually stopwords but might be important for your task (e.g., "not", "no" in sentiment analysis).
+
+```python
+custom_stopwords = set(stopwords.words('english')) # Use a set for efficient lookup
+
+# Adding a custom stopword
+custom_stopwords.add("example")
+custom_stopwords.add("showing")
+
+# Removing a word from the stopword list (if it was important)
+if "off" in custom_stopwords:
+    custom_stopwords.remove("off") # "off" might be important in some contexts
+
+text = "This is an example sentence showing off stop word filtration."
+words = word_tokenize(text.lower())
+filtered_custom_words = [word for word in words if word.isalnum() and word not in custom_stopwords]
+print(f"Words after custom stopword removal: {filtered_custom_words}")
+# Output:
+# Words after custom stopword removal: ['sentence', 'off', 'stop', 'word', 'filtration']
+```
+
+### Advantages of Removing Stopwords
+
+*   **Improved Efficiency**: Smaller data size leads to faster processing and model training.
+*   **Reduced Noise**: Can help models focus on more meaningful terms, potentially improving accuracy in tasks like text classification or topic modeling.
+*   **Better Feature Representation**: In "bag-of-words" models, removing stopwords prevents common words from dominating the feature space.
+
+### Disadvantages/Considerations for Removing Stopwords
+
+*   **Loss of Context/Meaning**: Sometimes stopwords are crucial for understanding the meaning or sentiment. For example:
+    *   "to be or not to be" - removing "to", "or", "not" changes the meaning significantly.
+    *   "not good" vs. "good" - removing "not" inverts the sentiment.
+*   **Task Dependent**: The utility of stopword removal depends heavily on the NLP task:
+    *   **Beneficial for**: Topic modeling, text classification (often), information retrieval.
+    *   **Often detrimental for**: Language modeling (where predicting the next word, including stopwords, is the goal), machine translation, sentiment analysis (where negations and intensifiers are important), some types of question answering.
+*   **Language Specific**: Stopword lists are language-dependent.
+
+### When to Remove Stopwords (and When Not To)
+
+*   **Consider Removing For**:
+    *   **Text Classification**: When classifying documents into broad topics.
+    *   **Topic Modeling**: To identify latent themes based on significant keywords.
+    *   **Information Retrieval**: To match queries with relevant documents based on content words (though modern search engines are more sophisticated).
+    *   When working with very large text datasets where efficiency is a major concern.
+
+*   **Consider Keeping For (or be cautious when removing)**:
+    *   **Sentiment Analysis**: Words like "not", "no", "very" can be critical.
+    *   **Machine Translation**: The grammatical structure and all words are important.
+    *   **Language Modeling**: The goal is to understand/generate fluent language, including common words.
+    *   **Question Answering**: Understanding the nuances of a question often relies on stopwords.
+    *   **Analyzing phrases or n-grams**: "Statue of Liberty" vs. "Statue Liberty".
+
+Always consider the specific goals of your NLP task and experiment to see if stopword removal helps or hurts performance for your particular application.
