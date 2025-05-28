@@ -154,3 +154,4 @@ Here's how different stemmers might treat various words:
 *   When a slight loss in meaning or precision is acceptable for the sake of dimensionality reduction or improved recall.
 
 Stemming is often contrasted with **Lemmatization**, which is a more advanced technique that aims to return the dictionary form (lemma) of a word, considering its context and part of speech. Lemmatization is generally more accurate but computationally more expensive.
+
