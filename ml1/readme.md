@@ -353,3 +353,110 @@ print(f"Words after custom stopword removal: {filtered_custom_words}")
     *   **Analyzing phrases or n-grams**: "Statue of Liberty" vs. "Statue Liberty".
 
 Always consider the specific goals of your NLP task and experiment to see if stopword removal helps or hurts performance for your particular application.
+## Parts of Speech (POS) Tagging
+
+Part-of-Speech (POS) tagging is the process of assigning a grammatical category (like noun, verb, adjective, etc.) to each word in a text.
+
+### What is POS Tagging?
+
+*   **Purpose**: To identify the grammatical role of each word in a sentence.
+*   **Goal**: To understand the syntactic structure and often the meaning of text by labeling words with their respective parts of speech.
+*   **Example**:
+    *   Input: "The cat sat on the mat."
+    *   Output: `[('The', 'DT'), ('cat', 'NN'), ('sat', 'VBD'), ('on', 'IN'), ('the', 'DT'), ('mat', 'NN'), ('.', '.')]`
+        *   `DT`: Determiner
+        *   `NN`: Noun, singular
+        *   `VBD`: Verb, past tense
+        *   `IN`: Preposition
+
+### How POS Tagging Works
+
+*   **Mechanism**: POS taggers use various techniques:
+    1.  **Rule-based taggers**: Use hand-crafted rules based on grammatical properties.
+    2.  **Stochastic/Probabilistic taggers**: Use statistical models (e.g., Hidden Markov Models, Maximum Entropy Models) trained on large annotated corpora. They calculate the probability of a word having a particular tag given its context.
+    3.  **Machine Learning-based taggers**: Modern taggers often use machine learning algorithms like Conditional Random Fields (CRFs) or neural networks.
+*   **Context is Key**: Taggers often consider the surrounding words to disambiguate words that can have multiple parts of speech (e.g., "book" can be a noun or a verb).
+
+### POS Tagging in NLTK
+
+NLTK provides a default POS tagger, `nltk.pos_tag`, which uses the Penn Treebank tagset.
+
+*   **`nltk.pos_tag`**:
+    *   Takes a list of tokenized words as input.
+    *   Outputs a list of tuples, where each tuple contains a word and its assigned POS tag.
+*   **NLTK Usage**:
+    ```python
+    import nltk
+    from nltk.tokenize import word_tokenize
+
+    # You might need to download the 'averaged_perceptron_tagger':
+    # nltk.download('averaged_perceptron_tagger')
+    # And 'punkt' for word_tokenize:
+    # nltk.download('punkt')
+
+    text = "NLTK is a powerful library for natural language processing."
+    words = word_tokenize(text)
+    pos_tags = nltk.pos_tag(words)
+
+    print(pos_tags)
+    # Output:
+    # [('NLTK', 'NNP'), ('is', 'VBZ'), ('a', 'DT'), ('powerful', 'JJ'),
+    #  ('library', 'NN'), ('for', 'IN'), ('natural', 'JJ'),
+    #  ('language', 'NN'), ('processing', 'NN'), ('.', '.')]
+    ```
+
+### Common Penn Treebank POS Tags
+
+Here are some frequently encountered tags:
+
+| Tag   | Description              | Example(s)        |
+| :---- | :----------------------- | :---------------- |
+| `NN`  | Noun, singular or mass   | cat, tree, beauty |
+| `NNS` | Noun, plural             | cats, trees       |
+| `NNP` | Proper noun, singular    | London, John      |
+| `NNPS`| Proper noun, plural      | Americans, Alps   |
+| `VB`  | Verb, base form          | take, eat         |
+| `VBD` | Verb, past tense         | took, ate         |
+| `VBG` | Verb, gerund/present participle | taking, eating    |
+| `VBN` | Verb, past participle    | taken, eaten      |
+| `VBP` | Verb, non-3rd person singular present | take, eat (I take) |
+| `VBZ` | Verb, 3rd person singular present | takes, eats (He takes) |
+| `JJ`  | Adjective                | happy, big        |
+| `JJR` | Adjective, comparative   | happier, bigger   |
+| `JJS` | Adjective, superlative   | happiest, biggest |
+| `RB`  | Adverb                   | quickly, very     |
+| `IN`  | Preposition/Subordinating conjunction | in, on, of, if    |
+| `DT`  | Determiner               | the, a, an, this  |
+| `PRP` | Personal pronoun         | I, he, she, it    |
+| `PRP$`| Possessive pronoun       | my, your, his     |
+| `CC`  | Coordinating conjunction | and, but, or      |
+| `CD`  | Cardinal number          | one, 2, three     |
+| `MD`  | Modal                    | can, could, will  |
+| `.`   | Punctuation              | . , ! ?           |
+
+*(This is not an exhaustive list.)*
+
+### Why is POS Tagging Important/Useful?
+
+*   **Lemmatization**: Knowing the POS of a word (e.g., whether "running" is a verb or a noun) helps in finding its correct lemma.
+*   **Named Entity Recognition (NER)**: Identifying proper nouns (NNP) is a first step in recognizing names of people, organizations, locations.
+*   **Information Extraction**: Helps in understanding relationships between words (e.g., subject-verb-object).
+*   **Question Answering**: Understanding the grammatical structure of a question and text helps find answers.
+*   **Text Summarization**: Identifying key verbs and nouns can help pinpoint important information.
+*   **Improving other NLP tasks**: Can be a preprocessing step for parsing, machine translation, and sentiment analysis.
+
+### Challenges in POS Tagging
+
+*   **Ambiguity**: Many words can have different POS tags depending on the context. For example:
+    *   "I **book** a flight." (Verb)
+    *   "I read a **book**." (Noun)
+    *   "They **run** fast." (Verb)
+    *   "It was a long **run**." (Noun)
+    Taggers use context to resolve such ambiguities, but they are not always perfect.
+
+### When to Use POS Tagging
+
+*   When you need to understand the grammatical structure of sentences.
+*   As a prerequisite for more advanced NLP tasks like lemmatization, NER, parsing, or information extraction.
+*   When analyzing word usage patterns based on their grammatical roles.
+*   In applications requiring a deeper understanding of text beyond just keywords.
