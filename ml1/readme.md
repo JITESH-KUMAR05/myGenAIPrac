@@ -460,3 +460,329 @@ Here are some frequently encountered tags:
 *   As a prerequisite for more advanced NLP tasks like lemmatization, NER, parsing, or information extraction.
 *   When analyzing word usage patterns based on their grammatical roles.
 *   In applications requiring a deeper understanding of text beyond just keywords.
+
+## Named Entity Recognition (NER)
+
+Named Entity Recognition is the process of identifying and categorizing key information (entities) in text into predefined categories such as names of persons, organizations, locations, dates, monetary values, etc.
+
+### What is NER?
+
+*   **Purpose**: To locate and classify named entities in unstructured text.
+*   **Goal**: To extract specific pieces of information and understand "who," "what," "where," "when," and "how much" from text.
+*   **Example**:
+    *   Input: "Apple is looking at buying U.K. startup for $1 billion."
+    *   Output:
+        *   `Apple`: ORG (Organization)
+        *   `U.K.`: GPE (Geopolitical Entity/Location)
+        *   `$1 billion`: MONEY (Monetary Value)
+
+### How NER Works
+
+*   **Mechanism**: NER systems often use:
+    1.  **Rule-based approaches**: Using grammatical rules, dictionaries (gazetteers), or regular expressions.
+    2.  **Machine Learning models**: Trained on annotated text data (e.g., using Conditional Random Fields (CRFs), Support Vector Machines (SVMs), or more recently, deep learning models like LSTMs or Transformers). These models learn patterns and context to identify entities.
+*   **Features**: Models often use features like capitalization, part-of-speech tags, word shapes, and surrounding words.
+
+### NER in NLTK (and other libraries like spaCy)
+
+NLTK provides basic NER capabilities, but libraries like spaCy are often preferred for more robust and accurate NER.
+
+*   **NLTK Usage (Conceptual with `ne_chunk`)**:
+    NLTK's `ne_chunk` typically requires POS-tagged and tokenized input.
+    ```python
+    import nltk
+    from nltk.tokenize import word_tokenize
+    from nltk.tag import pos_tag
+    from nltk.chunk import ne_chunk
+
+    # nltk.download('maxent_ne_chunker')
+    # nltk.download('words') # for ne_chunk
+    # nltk.download('averaged_perceptron_tagger') # for pos_tag
+
+    text = "Apple is looking at buying U.K. startup for $1 billion in London."
+    tokens = word_tokenize(text)
+    pos_tags = pos_tag(tokens)
+    tree = ne_chunk(pos_tags) # tree is an NLTK Tree object
+
+    # To extract entities (simplified):
+    # for subtree in tree:
+    #     if hasattr(subtree, 'label'):
+    #         entity_label = subtree.label()
+    #         entity_text = ' '.join([leaf[0] for leaf in subtree.leaves()])
+    #         print(f"{entity_text}: {entity_label}")
+    # Output might be:
+    # Apple: ORGANIZATION (or PERSON depending on model)
+    # U.K.: GPE
+    # London: GPE
+    ```
+    *Note: NLTK's default NER might not recognize "$1 billion" as MONEY without further customization.*
+
+*   **spaCy Example (More common for NER)**:
+    ```python
+    # import spacy
+    # nlp = spacy.load("en_core_web_sm") # Load a small English model
+    # text = "Apple is looking at buying U.K. startup for $1 billion in London."
+    # doc = nlp(text)
+    # for ent in doc.ents:
+    #     print(f"{ent.text}: {ent.label_}")
+    # Output:
+    # Apple: ORG
+    # U.K.: GPE
+    # $1 billion: MONEY
+    # London: GPE
+    ```
+
+### Common Entity Types
+
+*   `PERSON`: People's names.
+*   `ORG`: Organizations, companies, institutions.
+*   `GPE`: Geopolitical Entities (countries, cities, states).
+*   `LOC`: Non-GPE locations (mountains, rivers).
+*   `DATE`: Absolute or relative dates.
+*   `TIME`: Times.
+*   `MONEY`: Monetary values.
+*   `PERCENT`: Percentages.
+*   `PRODUCT`: Products.
+*   `EVENT`: Named events.
+
+### Why is NER Useful?
+
+*   **Information Extraction**: Quickly pull out structured information from large volumes of text.
+*   **Content Categorization**: Classify documents based on the entities they contain.
+*   **Search and Recommendation**: Improve search relevance by understanding entities in queries and documents.
+*   **Customer Support**: Automatically extract key information from customer feedback or support tickets.
+*   **Knowledge Graph Building**: Identify entities and their relationships.
+
+### When to Use NER
+
+*   When you need to identify specific types of information (people, places, organizations, etc.) within text.
+*   For summarizing text by extracting key entities.
+*   As a preprocessing step for tasks like relation extraction or question answering.
+
+## One-Hot Encoding
+
+One-Hot Encoding is a technique used to convert categorical data (like words or labels) into a numerical format that can be fed into machine learning algorithms. Each category or word is represented as a binary vector.
+
+### What is One-Hot Encoding?
+
+*   **Purpose**: To represent categorical variables as binary vectors.
+*   **Goal**: To transform non-numerical data into a numerical format suitable for machine learning models, without implying any ordinal relationship between categories.
+*   **Example**:
+    *   Suppose we have a vocabulary: `["cat", "dog", "mat"]`
+    *   `"cat"` -> `[1, 0, 0]`
+    *   `"dog"` -> `[0, 1, 0]`
+    *   `"mat"` -> `[0, 0, 1]`
+
+### How One-Hot Encoding Works
+
+1.  **Identify Unique Categories**: First, determine all unique categories (e.g., unique words in a vocabulary).
+2.  **Create Binary Vectors**: For each category, create a vector with a length equal to the total number of unique categories.
+3.  **Assign '1'**: In this vector, place a '1' at the index corresponding to the specific category and '0's elsewhere.
+
+*   **For a sentence**: "the cat sat" (assuming vocabulary: ["the", "cat", "sat", "on", "mat"])
+    *   "the": `[1, 0, 0, 0, 0]`
+    *   "cat": `[0, 1, 0, 0, 0]`
+    *   "sat": `[0, 0, 1, 0, 0]`
+
+### Example (Conceptual)
+
+Consider a small corpus:
+`doc1 = "cat sat"`
+`doc2 = "dog sat"`
+
+1.  **Vocabulary**: `{"cat", "dog", "sat"}` (sorted: `["cat", "dog", "sat"]`)
+2.  **Encoding**:
+    *   `"cat"`: `[1, 0, 0]`
+    *   `"dog"`: `[0, 1, 0]`
+    *   `"sat"`: `[0, 0, 1]`
+
+If representing words in `doc1`:
+*   `"cat"` -> `[1, 0, 0]`
+*   `"sat"` -> `[0, 0, 1]`
+
+### Advantages of One-Hot Encoding
+
+*   **No Ordinal Relationship**: Unlike label encoding (e.g., cat=0, dog=1, mat=2), it doesn't imply an order or ranking between categories, which is often more appropriate.
+*   **Easy for Models**: Many machine learning algorithms work well with this numerical format.
+
+### Disadvantages of One-Hot Encoding
+
+*   **High Dimensionality (Curse of Dimensionality)**: If you have many unique categories (e.g., a large vocabulary of words), the resulting vectors will be very long and sparse (mostly zeros). This can lead to:
+    *   Increased memory usage.
+    *   Increased computation time.
+    *   Potentially poorer model performance if the number of features is too large compared to the number of samples.
+*   **No Semantic Relationship**: It doesn't capture any semantic similarity between words (e.g., "cat" and "dog" are as different as "cat" and "car").
+
+### When to Use One-Hot Encoding
+
+*   For categorical features with a **small number of unique values**.
+*   When the categorical features are nominal (no inherent order).
+*   As a basic way to represent words for simple NLP models, though often superseded by techniques like Bag of Words or embeddings for text.
+*   Often used for representing categorical labels in classification tasks.
+
+## Bag of Words (BoW)
+
+The Bag of Words (BoW) model is a simple way to represent text data for machine learning. It describes the occurrence of each word within a document, disregarding grammar and word order but keeping track of word frequency.
+
+### What is Bag of Words?
+
+*   **Purpose**: To convert a piece of text into a fixed-size numerical vector.
+*   **Goal**: To represent a document by the words it contains and their counts, ignoring the sequence or structure.
+*   **Analogy**: Imagine a "bag" where you put all the words from a document. The model only cares about what words are in the bag and how many times each appears, not their order.
+
+### How Bag of Words Works
+
+1.  **Tokenization**: Break the text into individual words (tokens).
+2.  **Vocabulary Creation**: Create a list of all unique words across all documents in your corpus. This forms your vocabulary.
+3.  **Vectorization**: For each document, create a vector where:
+    *   The length of the vector is the size of the vocabulary.
+    *   Each element in the vector corresponds to a unique word in the vocabulary.
+    *   The value of each element is the count (frequency) of that word in the document.
+
+### Example
+
+**Corpus**:
+*   `Doc1: "The cat sat on the mat."`
+*   `Doc2: "The dog ate the cat."`
+
+1.  **Tokenization & Lowercasing (optional but common)**:
+    *   `Doc1 tokens: ["the", "cat", "sat", "on", "the", "mat"]`
+    *   `Doc2 tokens: ["the", "dog", "ate", "the", "cat"]`
+
+2.  **Vocabulary Creation (unique words)**:
+    *   `{"the", "cat", "sat", "on", "mat", "dog", "ate"}`
+    *   Sorted vocabulary: `["ate", "cat", "dog", "mat", "on", "sat", "the"]` (length 7)
+
+3.  **Vectorization**:
+    *   **Doc1**: `["the", "cat", "sat", "on", "the", "mat"]`
+        *   `ate`: 0
+        *   `cat`: 1
+        *   `dog`: 0
+        *   `mat`: 1
+        *   `on`: 1
+        *   `sat`: 1
+        *   `the`: 2
+        *   **BoW Vector for Doc1: `[0, 1, 0, 1, 1, 1, 2]`**
+
+    *   **Doc2**: `["the", "dog", "ate", "the", "cat"]`
+        *   `ate`: 1
+        *   `cat`: 1
+        *   `dog`: 1
+        *   `mat`: 0
+        *   `on`: 0
+        *   `sat`: 0
+        *   `the`: 2
+        *   **BoW Vector for Doc2: `[1, 1, 1, 0, 0, 0, 2]`**
+
+### Advantages of Bag of Words
+
+*   **Simplicity**: Easy to understand and implement.
+*   **Effectiveness**: Works surprisingly well for many NLP tasks like document classification and topic modeling.
+*   **Computational Efficiency**: Relatively fast to compute.
+
+### Disadvantages of Bag of Words
+
+*   **Loss of Word Order**: Ignores grammar, syntax, and the sequence of words, which can be important for meaning (e.g., "dog bites man" vs. "man bites dog").
+*   **Sparsity**: For large vocabularies, the vectors are often very long and sparse (mostly zeros), which can be inefficient.
+*   **No Semantic Meaning**: Doesn't capture the meaning or relationships between words (e.g., "car" and "automobile" are treated as completely different).
+*   **Vocabulary Size**: Can lead to very high-dimensional feature spaces if the vocabulary is large.
+
+### When to Use Bag of Words
+
+*   **Text Classification**: A common baseline for tasks like spam detection or sentiment analysis.
+*   **Topic Modeling**: Algorithms like Latent Dirichlet Allocation (LDA) often use BoW representations.
+*   **Information Retrieval**: For simple document matching.
+*   When a quick and simple representation of text content is needed, and word order is not critical.
+
+## TF-IDF (Term Frequency-Inverse Document Frequency)
+
+TF-IDF is a numerical statistic that reflects how important a word is to a document in a collection or corpus. It's a more sophisticated way to represent text than simple word counts (BoW) because it gives more weight to words that are frequent in a document but rare across all documents.
+
+### What is TF-IDF?
+
+*   **Purpose**: To score the importance of words (terms) in a document based on how often they appear in that document and how often they appear in the entire corpus.
+*   **Goal**: To highlight words that are characteristic of a particular document, downplaying common words that appear in many documents.
+
+### How TF-IDF Works
+
+TF-IDF for a term `t` in a document `d` from a corpus `D` is calculated as:
+
+**TF-IDF(t, d, D) = TF(t, d) * IDF(t, D)**
+
+1.  **Term Frequency (TF)**: Measures how frequently a term appears in a document.
+    *   `TF(t, d) = (Number of times term t appears in document d) / (Total number of terms in document d)`
+    *   There are variations (e.g., raw count, boolean frequency, log normalized frequency).
+
+2.  **Inverse Document Frequency (IDF)**: Measures how important a term is across the entire corpus. It diminishes the weight of terms that occur very frequently across all documents and increases the weight of terms that occur rarely.
+    *   `IDF(t, D) = log( (Total number of documents in corpus D) / (Number of documents containing term t) + 1 )`
+    *   The `+1` in the denominator is to avoid division by zero if a term is not in any document (though typically terms considered are from the corpus vocabulary). The `log` helps to dampen the effect of very high IDF values.
+
+**The TF-IDF score is high if:**
+*   A term appears many times in a specific document (high TF).
+*   AND the term appears in few documents across the corpus (high IDF).
+
+**The TF-IDF score is low if:**
+*   A term appears rarely in a document (low TF).
+*   OR a term appears in many documents (low IDF, e.g., common words like "the", "is").
+
+### Example
+
+**Corpus**:
+*   `Doc1: "The cat sat on the mat."`
+*   `Doc2: "The dog ate the cat."`
+
+**Vocabulary**: `["ate", "cat", "dog", "mat", "on", "sat", "the"]`
+Total documents = 2
+
+Let's calculate TF-IDF for "cat" in Doc1:
+*   **TF("cat", Doc1)**:
+    *   "cat" appears 1 time in Doc1.
+    *   Total terms in Doc1 = 6 (`["the", "cat", "sat", "on", "the", "mat"]`)
+    *   `TF("cat", Doc1) = 1 / 6`
+
+*   **IDF("cat", Corpus)**:
+    *   Number of documents containing "cat" = 2 (Doc1, Doc2)
+    *   Total documents = 2
+    *   `IDF("cat", Corpus) = log(2 / 2 + 1)` (using a common variation with +1 in denominator for smoothing, or `log(N / (df + 1))` where N is total docs, df is doc frequency. Simpler: `log(Total Docs / Docs with term)`)
+    *   Let's use `log(Total Docs / Docs with term)` for simplicity here, assuming `Docs with term > 0`.
+    *   `IDF("cat", Corpus) = log(2 / 2) = log(1) = 0` (This indicates "cat" is common, so its IDF is low. If using `log(N / (df + 1))`, it would be `log(2 / (2+1)) = log(2/3)` which is negative, so often `log(1 + N/df)` or `log(N/df) + 1` is used to ensure non-negativity. A common formula is `log(N / df)` and if df=N, then IDF=0. If a term is in all docs, it's not discriminative.)
+
+    *Let's use a more standard IDF: `log( (1 + N) / (1 + df) ) + 1` or `log(N/df)` and handle `df=0` by adding 1 to `df` or `N`.
+    A common scikit-learn IDF: `log(N / df) + 1` (where N is total docs, df is doc freq of term)
+    *   `IDF("cat", Corpus) = log(2 / 2) + 1 = log(1) + 1 = 0 + 1 = 1`
+
+*   **TF-IDF("cat", Doc1)** = `(1/6) * 1 = 1/6`
+
+Let's calculate TF-IDF for "mat" in Doc1:
+*   **TF("mat", Doc1)**:
+    *   "mat" appears 1 time in Doc1. Total terms in Doc1 = 6.
+    *   `TF("mat", Doc1) = 1 / 6`
+*   **IDF("mat", Corpus)**:
+    *   Number of documents containing "mat" = 1 (Doc1 only)
+    *   `IDF("mat", Corpus) = log(2 / 1) + 1 = log(2) + 1 ≈ 0.693 + 1 = 1.693`
+*   **TF-IDF("mat", Doc1)** = `(1/6) * 1.693 ≈ 0.282`
+
+"mat" has a higher TF-IDF score in Doc1 than "cat" because "mat" is rarer in the corpus.
+
+A document is represented as a vector of TF-IDF scores, one score for each word in the vocabulary.
+
+### Advantages of TF-IDF
+
+*   **Reduces Impact of Common Words**: Automatically down-weights words that are frequent across all documents (like stopwords, though explicit stopword removal is still often done).
+*   **Highlights Important Words**: Gives higher scores to words that are frequent in a document but rare overall, making them good discriminators.
+*   **Simple and Effective**: Relatively easy to compute and often improves performance over simple BoW for tasks like text classification and information retrieval.
+
+### Disadvantages of TF-IDF
+
+*   **Still Ignores Word Order**: Like BoW, it doesn't consider the sequence of words or semantic relationships.
+*   **Sparsity**: Can still result in sparse vectors for large vocabularies.
+*   **Doesn't Capture Semantics**: "car" and "automobile" are still treated as different terms with no inherent similarity.
+*   **Corpus Dependent**: IDF scores depend on the entire corpus; adding new documents can change existing IDF values.
+
+### When to Use TF-IDF
+
+*   **Information Retrieval and Search Engines**: To rank documents based on their relevance to a query.
+*   **Text Classification and Clustering**: As a feature representation for machine learning models.
+*   **Topic Modeling**: Can be an input to some topic modeling algorithms.
+*   When you want a more nuanced representation of word importance in documents than simple counts.
+*   Often a good step up from basic Bag of Words.
