@@ -132,3 +132,5 @@ Tree 1 (using random    Tree 2 (using random    ... Tree N (using random
 
 **When to use Random Forest:**
 It's a good general-purpose algorithm, often a strong baseline for many classification and regression tasks.
+
+
