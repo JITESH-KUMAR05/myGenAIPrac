@@ -14,4 +14,12 @@ step 4 Normalised weight computation and assigning Bins
         so first take the total sum and then divide each weight with that weight then the new sum will come near to 1 
         then we have to do bins assignment so that the next model will mostly take the data which was wrong 
         so the wrong predicted records will be having the maximum bin size so that the probability of getting that selected becomes high
-        
+Step 5  Selecting new data points for next tree
+        now we will do one iterative process and take random value between 0 and 1
+        now we will get new records for the next tree and most of them will be the one's wrongly predicted by the previous one 
+        then we will again assign the sample weights and then we will have the same steps to follow 
+Step 6 Final prediction
+        we will have performance of say depending on the alpha values and the one which is high will be the output
+
+
+Note : this we did for Classification problem statement so when we are going for regression problem statement then instead of entropy we will use mean squared error 
